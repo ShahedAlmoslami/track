@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:track/core/theme/colors.dart';
-import 'package:track/logic/sign_up/cubit.dart';
-import 'package:track/logic/sign_up/state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class MyButtonStyle extends StatefulWidget {
-   Color buttonColor =ColorManager.prymaryColor;
-   String buttonText;
+  final Color buttonColor =ColorManager.prymaryColor;
+  final String buttonText;
   double buttonHight=60;
   double buttonWidth=336;
   final  bool isLoading=false;

@@ -4,11 +4,11 @@ import 'package:track/core/theme/colors.dart';
 class TextFormFieldWidget extends StatefulWidget {
   final String hintText;
   final TextEditingController controller ;
-  double hight=60;
-    double width=329;
+  final double hight=60;
+    final double width=329;
 
 
-   TextFormFieldWidget({super.key,required this.hintText,required this.controller,});
+  const TextFormFieldWidget({super.key,required this.hintText,required this.controller,});
 
   @override
   State<TextFormFieldWidget> createState() => _TextFormFieldWidgetState();

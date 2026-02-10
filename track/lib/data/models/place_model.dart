@@ -7,6 +7,7 @@ class PlaceModel {
   final double price;
   final String currency;
   final String cityId;
+  
 
   PlaceModel({
     required this.id,

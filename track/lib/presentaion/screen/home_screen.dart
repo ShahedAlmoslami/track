@@ -15,10 +15,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String query = "";
 
   final List<Map<String, String>> allCities = [
-    {'img': 'assets/images/cairo.png', 'name': Tex.cairo},
-    {'img': 'assets/images/dahab.png', 'name': Tex.dahab},
-    {'img': 'assets/images/sharmalshekh.png', 'name': Tex.sharmalshekh},
-    {'img': 'assets/images/aleskandaria.png', 'name': Tex.aleskandaria},
+    {'img': 'assets/images/cairo.png', 'name': Tex.cairo, 'id': 'cairo'},
+    {'img': 'assets/images/dahab.png', 'name': Tex.dahab, 'id': 'dahab'},
+    {'img': 'assets/images/sharmalshekh.png', 'name': Tex.sharmalshekh, 'id': 'sharmalshekh'},
+    {'img': 'assets/images/aleskandaria.png', 'name': Tex.aleskandaria, 'id': 'aleskandaria'},
   ];
  
   @override
@@ -94,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return CityWidget(
                     imageName: item['img']!,
                     cityName: item['name']!,
+                    cityId: item['id']!,
                   );
                 },
               ),

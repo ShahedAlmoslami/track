@@ -5,7 +5,7 @@ import 'package:track/logic/sign_up/state.dart';
 
 class SignUpCubit extends Cubit<SignUpState>{
   SignUpCubit():super (SignUpInatialState());
-  Future SignUp (String email,String password)async{
+  Future signUp (String email,String password)async{
     try{
       emit(SignUpLoadingState());
      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password:password );

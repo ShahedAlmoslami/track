@@ -14,7 +14,7 @@ class Tex {
   static String dontHaveAcc = 'Create account';
     static String haveAcc = 'already have an account?';
 
-  static String Login = 'Log in';
+  static String login = 'Log in';
   static String cairo = 'Cairo';
   static String aleskandaria = 'Aleskandaria';
   static String sharmalshekh = 'Sharmalshekh';

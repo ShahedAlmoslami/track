@@ -14,7 +14,7 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           Positioned.fill(child: Image.asset('assets/images/welcome.png')),
           Container(
-            color: ColorManager.ContainerColor,
+            color: ColorManager.containerColor,
             child: Align(
               alignment: Alignment.bottomCenter,
               child: SizedBox(

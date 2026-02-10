@@ -11,7 +11,7 @@ import 'package:track/presentaion/widgets/button_style.dart';
 import 'package:track/presentaion/widgets/text_form_field_widget.dart';
 import 'package:track/presentaion/screen/log_in_screen.dart';
 class SignUpScreen extends StatelessWidget {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
   SignUpScreen({super.key});
   final TextEditingController passController = TextEditingController();
@@ -80,7 +80,7 @@ class SignUpScreen extends StatelessWidget {
                           ignoring:isLoading,
                           child: InkWell(
                             onTap: () {
-                              context.read<SignUpCubit>().SignUp(
+                              context.read<SignUpCubit>().signUp(
                                 emailController.text,
                                 passController.text,
                               );

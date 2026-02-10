@@ -5,11 +5,14 @@ import 'package:track/presentaion/screen/overview.dart';
 class CityWidget extends StatefulWidget {
   final String imageName;
   final String cityName;
+  final String cityId;
+
 
   const CityWidget({
     super.key,
     required this.imageName,
     required this.cityName,
+    required this.cityId,
   });
   @override
   State<CityWidget> createState() => _CityWidgetState();
@@ -22,7 +25,7 @@ class _CityWidgetState extends State<CityWidget> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Overview()),
+          MaterialPageRoute(builder: (context) => Overview(cityId: widget.cityId,)),
         );
       },
 
@@ -35,7 +38,7 @@ class _CityWidgetState extends State<CityWidget> {
               width: 345,
 
               decoration: BoxDecoration(
-                color: ColorManager.ContainerColor,
+                color: ColorManager.containerColor,
                 borderRadius: BorderRadius.circular(60),
               ),
             ),
@@ -53,7 +56,7 @@ class _CityWidgetState extends State<CityWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Image.asset('assets/images/book.png'),
+                    Image.asset('assets/images/book.png', fit: BoxFit.contain),
                   ],
                 ),
               ),

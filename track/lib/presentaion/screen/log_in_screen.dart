@@ -87,7 +87,7 @@ class LogInScreen extends StatelessWidget {
                             child: MyButtonStyle(
                               buttonHight: 60,
                               buttonWidth: 329,
-                              buttonText: Tex.Login,
+                              buttonText: Tex.login,
                             ),
                           ),
                         ),
