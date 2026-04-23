@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:track/core/theme/colors.dart';
+import 'package:track/presentaion/screen/city_history.dart';
+import 'package:track/presentaion/screen/hotelScreen.dart';
 import 'package:track/presentaion/screen/overview.dart';
 
 class CityWidget extends StatefulWidget {
@@ -32,7 +34,10 @@ class _CityWidgetState extends State<CityWidget> {
       child: Center(
         child: Stack(
           children: [
-            Image.asset(widget.imageName, height: 240, width: 345),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(60),
+              child: Image.network(widget.imageName, height: 240, width: 345,fit: BoxFit.cover,
+)),
             Container(
               height: 240,
               width: 345,
@@ -52,11 +57,19 @@ class _CityWidgetState extends State<CityWidget> {
                       widget.cityName,
                       style: TextStyle(
                         color: ColorManager.whiteColor,
-                        fontSize: 24,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Image.asset('assets/images/book.png', fit: BoxFit.contain),
+                    IconButton( 
+                      icon: Image.asset('assets/images/book.png', fit: BoxFit.contain),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CityHistoryScreen(cityId: widget.cityId)),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),

@@ -17,7 +17,7 @@ class FigmaStackGallery extends StatefulWidget {
 }
 
 class _FigmaStackGalleryState extends State<FigmaStackGallery> {
-  int? expandedIndex; // null = ما في overlay
+  static int? expandedIndex; // null = ما في overlay
 
   @override
   Widget build(BuildContext context) {

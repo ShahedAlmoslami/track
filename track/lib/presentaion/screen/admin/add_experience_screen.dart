@@ -1,13 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:track/data/models/experience_model.dart';
 import 'package:track/data/services/cloudinary_service.dart';
-import 'package:track/data/services/place_model.dart';
+import 'package:track/data/services/place_rep.dart';
 import 'package:track/logic/admin/cuibt.dart';
 import 'package:track/logic/admin/state.dart';
+import 'package:track/presentaion/screen/admin/function.dart'; // appField + pickAndUploadMultiImages
 
 class AddExperienceScreen extends StatefulWidget {
   const AddExperienceScreen({super.key});
@@ -24,9 +23,13 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
   final ratingController = TextEditingController();
   final reviewsController = TextEditingController();
   final placeIdController = TextEditingController();
+  final cityIdController = TextEditingController();
 
   List<String> uploadedImageUrls = [];
   bool uploadingImage = false;
+    bool uploadingImageForSingle = false;
+  List<String> uploadedImage2 = [];
+
 
   @override
   void dispose() {
@@ -35,7 +38,71 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
     ratingController.dispose();
     reviewsController.dispose();
     placeIdController.dispose();
+    cityIdController.dispose();
     super.dispose();
+  }
+Future<void> uploadSingleImage(BuildContext ctx) async {
+    final urls = await pickAndUploadSingleImage(
+      context: ctx,
+      upload: (file) => CloudinaryService.uploadImage(file),
+      onLoading: (loading) => setState(() => uploadingImageForSingle = loading),
+    );
+
+
+    setState(() {
+      uploadedImage2
+        ..clear()
+        ..add(urls!);});
+  }
+  Future<void> uploadImages(BuildContext ctx) async {
+    final urls = await pickAndUploadMultiImages(
+      context: ctx,
+      upload: (file) => CloudinaryService.uploadImage(file),
+      onLoading: (loading) => setState(() => uploadingImage = loading),
+    );
+
+    if (urls.isEmpty) return;
+
+    setState(() {
+      uploadedImageUrls
+        ..clear()
+        ..addAll(urls);
+    });
+  }
+
+  void submit(BuildContext ctx) {
+    if (!(formKey.currentState?.validate() ?? false)) return;
+
+    if (uploadedImageUrls.isEmpty) {
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        const SnackBar(content: Text('Please upload at least one image')),
+      );
+      return;
+    }
+
+    final rating = double.tryParse(ratingController.text.trim()) ?? 0.0;
+    final reviews = int.tryParse(reviewsController.text.trim()) ?? 0;
+    final price = double.tryParse(priceController.text.trim()) ?? 0.0;
+
+    final experience = ExperienceModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: nameController.text.trim(),
+      detailsImages: uploadedImage2.isNotEmpty ? uploadedImage2.first : '',
+      rating: rating,
+      reviews: reviews,
+      price: price,
+      currency: 'EGP',
+       images: List<String>.from(uploadedImageUrls),
+
+    );
+
+    ctx.read<AdminCubit>().addExperience(
+      cityIdController.text.trim(),
+      placeIdController.text.trim(),
+      experience,
+    );
+
+    debugPrint('Place ID: ${placeIdController.text}');
   }
 
   @override
@@ -53,15 +120,18 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
               ScaffoldMessenger.of(ctx).showSnackBar(
                 const SnackBar(content: Text('Experience added successfully')),
               );
+
               formKey.currentState?.reset();
-              uploadedImageUrls.clear();
-              // إذا بدك تنظف الحقول كمان:
               nameController.clear();
               priceController.clear();
               ratingController.clear();
               reviewsController.clear();
               placeIdController.clear();
-              setState(() {}); // عشان تحديث "Uploaded: x images"
+              cityIdController.clear();
+
+              setState(() {
+                uploadedImageUrls.clear();
+              });
             } else if (state is AdminError) {
               ScaffoldMessenger.of(ctx).showSnackBar(
                 SnackBar(content: Text(state.message)),
@@ -76,14 +146,21 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                   key: formKey,
                   child: Column(
                     children: [
-                      field(nameController, 'Experience Name'),
-
-                      uploadingImage
+                      appField(nameController, 'Experience Name'),
+                      uploadingImageForSingle
+                          ? const Center(child: CircularProgressIndicator())
+                          : ElevatedButton.icon(
+                              icon: const Icon(Icons.image),
+                              label: const Text('Pick & Upload Cover Images'),
+                              onPressed: () => uploadSingleImage(ctx),
+                            ),
+                                
+                     uploadingImage
                           ? const Center(child: CircularProgressIndicator())
                           : ElevatedButton.icon(
                               icon: const Icon(Icons.image),
                               label: const Text('Pick & Upload Images'),
-                              onPressed: () => _pickAndUploadImages(ctx),
+                              onPressed: () => uploadImages(ctx),
                             ),
 
                       const SizedBox(height: 12),
@@ -93,10 +170,12 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                       ),
 
                       const SizedBox(height: 12),
-                      field(priceController, 'Price', isNumber: true),
-                      field(ratingController, 'Rating (0 - 5)', isNumber: true),
-                      field(reviewsController, 'Reviews', isNumber: true),
-                      field(placeIdController, 'Place ID'),
+                      appField(priceController, 'Price', isNumber: true),
+                      appField(ratingController, 'Rating (0 - 5)',
+                          isNumber: true),
+                      appField(reviewsController, 'Reviews', isNumber: true),
+                      appField(cityIdController, 'City ID'),
+                      appField(placeIdController, 'Place ID'),
 
                       const SizedBox(height: 24),
                       state is AdminLoading
@@ -114,83 +193,5 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
         ),
       ),
     );
-  }
-
-  Widget field(
-    TextEditingController controller,
-    String label, {
-    bool isNumber = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        validator: (value) =>
-            value == null || value.trim().isEmpty ? 'Required' : null,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pickAndUploadImages(BuildContext ctx) async {
-    final picker = ImagePicker();
-    final List<XFile> pickedImages = await picker.pickMultiImage();
-
-    if (pickedImages.isEmpty) return;
-
-    setState(() => uploadingImage = true);
-
-    try {
-      uploadedImageUrls.clear();
-
-      for (final image in pickedImages) {
-        final url = await CloudinaryService.uploadImage(File(image.path));
-        uploadedImageUrls.add(url);
-      }
-
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(content: Text('All images uploaded successfully')),
-      );
-    } catch (_) {
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(content: Text('Image upload failed')),
-      );
-    } finally {
-      setState(() => uploadingImage = false);
-    }
-  }
-
-  void submit(BuildContext ctx) {
-    if (!(formKey.currentState?.validate() ?? false)) return;
-
-    if (uploadedImageUrls.isEmpty) {
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(content: Text('Please upload at least one image')),
-      );
-      return;
-    }
-
-    // ملاحظة: لو المستخدم دخل rating فاضي/غير رقم، double.parse رح يفجّر.
-    // بس بما انك عامل validator Required، رح يكون موجود. ومع هيك، هاي parse قاسية.
-    final experience = ExperienceModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: nameController.text.trim(),
-      images: List<String>.from(uploadedImageUrls),
-      rating: double.parse(ratingController.text.trim()),
-      reviews: int.parse(reviewsController.text.trim()),
-      price: double.parse(priceController.text.trim()),
-      currency: 'EGP',
-    );
-
-    ctx.read<AdminCubit>().addExperience(
-          placeIdController.text.trim(),
-          experience,
-        );
-
-    debugPrint('Place ID: ${placeIdController.text}');
   }
 }

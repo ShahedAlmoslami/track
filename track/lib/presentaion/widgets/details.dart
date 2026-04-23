@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:track/core/theme/colors.dart';
+import 'package:track/data/models/fav.dart';
+import 'package:track/presentaion/widgets/back_arrow.dart';
+import 'package:track/presentaion/widgets/fav.dart';
 
 class DetailsWidget extends StatefulWidget {
-   DetailsWidget({super.key, required this.itemCount, required this.detailsName,this.rating,required this.imageName});
-  final int itemCount; 
-  final String detailsName;
-  final List<String> imageName;
+  DetailsWidget({
+    super.key,
+    this.itemCount,
+    this.expName,
+    this.rating,
+    this.imageName,
+    this.isFav,
+    this.cuisiens,
+    required this.idF,
+    required this.idS,
+    required this.type,
+  });
+
+  final int? itemCount;
+  final String? expName;
+  final String? imageName;
   final String? rating;
+  bool? isFav = false;
+  final String? cuisiens;
+  final String idF;
+  String type;
+  String idS;
 
   @override
   State<DetailsWidget> createState() => _DetailsWidgetState();
@@ -15,83 +35,109 @@ class DetailsWidget extends StatefulWidget {
 class _DetailsWidgetState extends State<DetailsWidget> {
   @override
   Widget build(BuildContext context) {
+  
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
-      height: 216,
-      width: 400,
+      height: 300,
+      width: screenWidth,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
           SizedBox(
-              height: 216,
-              width: 400,
+            height: 216,
+            width: screenWidth,
             child: Stack(
               children: [
-                widget.imageName.isNotEmpty
-                    ? Image.asset(
-                        widget.imageName[0],
-                        height: 216,
-                        width: 400,
-                        fit: BoxFit.cover,
+                widget.imageName != null && widget.imageName!.isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                        child: Image.network(
+                          widget.imageName!,
+                          height: 250,
+                          width: screenWidth,
+                          fit: BoxFit.cover,
+                        ),
                       )
-                    : CircularProgressIndicator(),
+                    : const Center(child: CircularProgressIndicator()),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              color: ColorManager.whiteColorIcon,
-                              borderRadius: BorderRadius.circular(25),
-                              
-                            ),
-                            child: Icon(Icons.arrow_back, color: ColorManager.prymaryColor),
+                          ArrowBack(
+                            colorManage: ColorManager.whiteColorIcon,
+                            arrowColor: ColorManager.prymaryColor,
                           ),
-                          Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              color: ColorManager.whiteColorIcon,
-                              borderRadius: BorderRadius.circular(25),
-                                
+                          FavoriteButton(
+                            item: FavoriteItem(
+                              id: widget.idF,
+                              title: widget.expName ?? '',
+                              image: widget.imageName ?? '',
+                              type: widget.type,
+                              idS: widget.idS,
                             ),
-                            child: Icon(Icons.favorite_border, color: ColorManager.prymaryColor),
                           ),
                         ],
                       ),
-                      SizedBox(height: 40),
+                      const SizedBox(height: 40),
                       Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                        Text(widget.detailsName,
-                            style: TextStyle(color: ColorManager.whiteColor,fontSize: 24, fontWeight: FontWeight.bold),),
-                           Icon(Icons.location_on, color: ColorManager.whiteColor),
-                           Row(
-                             children: [
-                               Icon(Icons.star, color: ColorManager.yellowColor),
-                               SizedBox(width: 4),
-                                Text(widget.rating ?? '',
-                              style: TextStyle(color: ColorManager.whiteColor,fontSize: 14, fontWeight: FontWeight.w600),)
-                             ],
-                           ),
-                           
-                      ],)
+                          Text(
+                            widget.expName ?? '',
+                            style: const TextStyle(
+                              color: ColorManager.whiteColor,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.location_on,
+                            color: ColorManager.whiteColor,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            widget.cuisiens ?? '',
+                            style: const TextStyle(
+                              color: ColorManager.whiteColor,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                color: ColorManager.yellowColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                widget.rating ?? '',
+                                style: const TextStyle(
+                                  color: ColorManager.whiteColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                )
-                  
+                ),
               ],
             ),
-          )
+          ),
         ],
-      
-      
       ),
     );
   }

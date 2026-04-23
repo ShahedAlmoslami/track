@@ -1,15 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PlaceModel {
   final String id;
+
   final String name;
   final String imageUrl;
   final double rating;
-  final int reviews;
+  final int? reviews;
   final double price;
   final String currency;
-  final String cityId;
+  final bool isPopular;
+  final List<String>? imageList;
+
+  final String? history;
   
 
-  PlaceModel({
+  const PlaceModel({
     required this.id,
     required this.name,
     required this.imageUrl,
@@ -17,33 +23,43 @@ class PlaceModel {
     required this.reviews,
     required this.price,
     required this.currency,
-    required this.cityId,
+    this.isPopular = false,
+    this.imageList,
+    this.history, 
   });
 
-  /// من Firebase
-  factory PlaceModel.fromJson(String id, Map<String, dynamic> json) {
+  factory PlaceModel.fromJson({
+    required String cityId,
+    required DocumentSnapshot<Map<String, dynamic>> doc,
+  }) {
+    final data = doc.data() ?? {};
     return PlaceModel(
-      id: id,
-      name: json['name'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
-      rating: (json['rating'] ?? 0).toDouble(),
-      reviews: json['reviews'] ?? 0,
-      price: (json['price'] ?? 0).toDouble(),
-      currency: json['currency'] ?? 'EGP',
-      cityId: json['cityId'] ?? '',
+      id: doc.id,
+      name: (data['name'] ?? '') as String,
+      imageUrl: (data['imageUrl'] ?? '') as String,
+      rating: (data['rating'] ?? 0).toDouble(),
+      reviews: data['reviews'] == null ? null : (data['reviews'] as num).toInt(),
+      price: (data['price'] ?? 0).toDouble(),
+      currency: (data['currency'] ?? 'EGP') as String,
+      isPopular: (data['isPopular'] ?? false) as bool,
+      imageList: (data['imageList'] as List?)?.map((e) => e.toString()).toList(),
+
+      
+      history: data['history'] as String?,
     );
   }
 
-  /// إلى Firebase
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'imageUrl': imageUrl,
-      'rating': rating,
-      'reviews': reviews,
-      'price': price,
-      'currency': currency,
-      'cityId': cityId,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'imageUrl': imageUrl,
+        'rating': rating,
+        'reviews': reviews,
+        'price': price,
+        'currency': currency,
+        'isPopular': isPopular,
+        'imageList': imageList,
+
+        
+        'history': history,
+      };
 }

@@ -88,6 +88,7 @@ class SignUpScreen extends StatelessWidget {
                             child: MyButtonStyle(
                               buttonHight: 60,
                               buttonWidth: 329,
+                              raduis: 30,
                               buttonText: Tex.signUp,
                               isLoading:isLoading ,
                             ),
@@ -101,6 +102,7 @@ class SignUpScreen extends StatelessWidget {
                           child: MyButtonStyle(
                             buttonHight: 60,
                             buttonWidth: 329,
+                            raduis: 30,
                             buttonText: Tex.continueWithGoogle,
                           ),
                         ),

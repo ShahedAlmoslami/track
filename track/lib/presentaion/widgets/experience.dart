@@ -5,7 +5,7 @@ import 'package:track/presentaion/widgets/gallery_view.dart';
 class ExperienceWidget extends StatefulWidget {
   String experience ;
      List<String> images; 
-       String price ;
+       double price ;
    ExperienceWidget({super.key, required this.images,required this.experience,required this.price});
   @override
   State<ExperienceWidget> createState() => _ExperienceWidgetState();
@@ -36,16 +36,20 @@ class _ExperienceWidgetState extends State<ExperienceWidget> {
                     children: [
                       Text(widget.experience,
                           style: TextStyle(color: ColorManager.whiteColor,fontSize: 16, fontWeight: FontWeight.bold),),
-                           Text(widget.price,
-                      style: TextStyle(color: ColorManager.whiteColor,fontSize: 16, ),),
+                          
                     ],
+
                   ),
-                 
+                  
                       Row(
+                        
                         children: [
                           Icon(Icons.star, color: ColorManager.yellowColor),
                           Text("4.5", style: TextStyle(color: ColorManager.whiteColor,fontSize: 12, ),),
-                        ],
+                            SizedBox(width: 20),
+                        Text("${widget.price}",
+                      style: TextStyle(color: ColorManager.whiteColor,fontSize: 16, )),
+                  ],
                       ),
                      
                 ],

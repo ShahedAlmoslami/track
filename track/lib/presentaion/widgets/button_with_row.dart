@@ -5,10 +5,13 @@ import 'package:track/core/theme/colors.dart';
 class ButtonwithRow extends StatefulWidget {
   final Color buttonColor =ColorManager.prymaryColor;
   final String buttonText;
-  double buttonHight=60;
-  double buttonWidth=336;
+  double? buttonHight;
+  double? buttonWidth;
   final  bool isLoading=false;
-    ButtonwithRow({super.key,required buttonHight,required buttonWidth,required this.buttonText, isLoading});
+   final  String buttonIcon;
+
+
+    ButtonwithRow({super.key,required this.buttonHight,required this.buttonWidth,required this.buttonText, isLoading, this.buttonIcon='assets/images/airplane.png'});
   
 
 
@@ -23,11 +26,11 @@ class _ButtonwithRowState extends State<ButtonwithRow> {
   Widget build(BuildContext context) {
 
     return Container(
-      height: widget.buttonHight,
-      width: widget.buttonWidth,
+      height: widget.buttonHight??60,
+      width: widget.buttonWidth??336,
       decoration: BoxDecoration(
       color: widget.buttonColor,
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(30),
 
 
       ),
@@ -35,15 +38,15 @@ class _ButtonwithRowState extends State<ButtonwithRow> {
         
         child:widget.isLoading? const SizedBox(height: 20,width: 20,child: CircularProgressIndicator(strokeWidth: 2,),):
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children:[ 
-              Image.asset('assets/images/airplane.png'),
-               SizedBox(width: 8,),
+Icon(Icons.airplanemode_active,color: Colors.white,size: 32,)             , 
+               SizedBox(width: 4,),
           
               Text(widget.buttonText,
-                        style: TextStyle(color: ColorManager.whiteColor,fontSize: 20, ),),
+                        style: TextStyle(color: ColorManager.whiteColor,fontSize: 20, fontWeight: FontWeight.bold),),
                         ]
           ),
         ),
